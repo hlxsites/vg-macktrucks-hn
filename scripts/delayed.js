@@ -1,18 +1,17 @@
-// eslint-disable-next-line import/no-cycle
 import { sampleRUM, loadScript } from './lib-franklin.js';
-
-const COOKIES = {
-  performance: 'C0002:1',
-};
+// eslint-disable-next-line import/no-cycle
+import { isPerformanceAllowed } from './common.js';
+import {
+  DATA_DOMAIN_SCRIPT,
+  GTM_ID,
+} from './constants.js';
 
 // Core Web Vitals RUM collection
 sampleRUM('cwv');
 
-const cookieSetting = decodeURIComponent(document.cookie.split(';')
-  .find((cookie) => cookie.trim().startsWith('OptanonConsent=')));
-const isPerformanceAllowed = cookieSetting.includes(COOKIES.performance);
 
-if (isPerformanceAllowed) {
+// COOKIE ACCEPTANCE CHECKING
+if (isPerformanceAllowed()) {
   loadGoogleTagManager();
 }
 
@@ -24,7 +23,7 @@ if (!window.location.pathname.includes('srcdoc')
   loadScript('https://cdn.cookielaw.org/scripttemplates/otSDKStub.js', {
     type: 'text/javascript',
     charset: 'UTF-8',
-    'data-domain-script': '18961cc8-1604-4bea-8e69-a5e7879e56c5',
+    'data-domain-script': DATA_DOMAIN_SCRIPT,
   });
 }
 
@@ -53,5 +52,5 @@ async function loadGoogleTagManager() {
   (function (w, d, s, l, i) {
     w[l] = w[l] || []; w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' }); const f = d.getElementsByTagName(s)[0]; const j = d.createElement(s); const
       dl = l !== 'dataLayer' ? `&l=${l}` : ''; j.async = true; j.src = `https://www.googletagmanager.com/gtm.js?id=${i}${dl}`; f.parentNode.insertBefore(j, f);
-  }(window, document, 'script', 'dataLayer', 'GTM-5DKKVHFL'));
+  }(window, document, 'script', 'dataLayer', GTM_ID));
 }
